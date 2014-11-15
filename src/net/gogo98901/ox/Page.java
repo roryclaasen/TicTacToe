@@ -112,7 +112,7 @@ public class Page extends JPanel {
 				if (Window.isMultiplayer()) {
 					if (isCurrent) {
 						mouse(e.getX(), e.getY());
-						Packet02Move packet = new Packet02Move(player.getUsername(), mx, my);
+						Packet02Move packet = new Packet02Move(player.getUsername(),e.getX(), e.getY());
 						packet.writeData(socketClient);
 					}
 				} else mouse(e.getX(), e.getY());
@@ -123,7 +123,7 @@ public class Page extends JPanel {
 				if (Window.isMultiplayer()) {
 					if (isCurrent) {
 						mouse(e.getX(), e.getY());
-						Packet02Move packet = new Packet02Move(player.getUsername(), mx, my);
+						Packet02Move packet = new Packet02Move(player.getUsername(),e.getX(), e.getY());
 						packet.writeData(socketClient);
 					}
 				} else mouse(e.getX(), e.getY());
