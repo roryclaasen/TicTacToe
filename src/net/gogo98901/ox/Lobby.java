@@ -18,6 +18,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import net.gogo98901.ox.player.PlayerMP;
 import net.gogo98901.ox.web.GameClient;
 import net.gogo98901.ox.web.GameServer;
 import net.gogo98901.ox.web.packet.Packet00Login;

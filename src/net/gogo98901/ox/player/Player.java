@@ -1,5 +1,6 @@
-package net.gogo98901.ox;
+package net.gogo98901.ox.player;
 
+import net.gogo98901.ox.Window;
 import net.gogo98901.ox.web.packet.Packet02Move;
 
 public class Player {

@@ -18,6 +18,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import net.gogo98901.Bootstrap;
+import net.gogo98901.ox.player.Player;
 import net.gogo98901.ox.web.GameClient;
 import net.gogo98901.ox.web.GameServer;
 import net.gogo98901.ox.web.packet.Packet02Move;

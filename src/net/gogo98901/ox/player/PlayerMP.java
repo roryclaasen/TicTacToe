@@ -1,4 +1,4 @@
-package net.gogo98901.ox;
+package net.gogo98901.ox.player;
 
 import java.net.InetAddress;
 

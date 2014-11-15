@@ -9,10 +9,10 @@ import java.net.UnknownHostException;
 
 import javax.swing.JOptionPane;
 
-import net.gogo98901.ox.Bootstrap;
+import net.gogo98901.Bootstrap;
 import net.gogo98901.ox.Page;
-import net.gogo98901.ox.PlayerMP;
 import net.gogo98901.ox.Window;
+import net.gogo98901.ox.player.PlayerMP;
 import net.gogo98901.ox.web.packet.Packet;
 import net.gogo98901.ox.web.packet.Packet.PacketTypes;
 import net.gogo98901.ox.web.packet.Packet00Login;

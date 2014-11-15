@@ -1,10 +1,12 @@
-package net.gogo98901.ox;
+package net.gogo98901;
 
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+
+import net.gogo98901.ox.Window;
 
 public class Bootstrap {
 	public static final int WIDTH = 700;
