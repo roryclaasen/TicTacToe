@@ -21,6 +21,7 @@ import net.gogo98901.ox.web.packet.Packet01Disconnect;
 import net.gogo98901.ox.web.packet.Packet02Move;
 import net.gogo98901.ox.web.packet.Packet03Click;
 import net.gogo98901.ox.web.packet.Packet04Start;
+import net.gogo98901.ox.web.packet.Packet05Response;
 
 public class GameServer extends Thread {
 
@@ -53,41 +54,52 @@ public class GameServer extends Thread {
 	}
 
 	private void parsePacket(byte[] data, InetAddress address, int port) {
-		String message = new String(data).trim();
-		PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
-		Packet packet = null;
-		switch (type) {
-		default:
-		case INVALID:
-			break;
-		case LOGIN:
-			if (connectedPlayers.size() < 2) {
-				packet = new Packet00Login(data);
-				System.out.println("SERVER] [" + address.getHostAddress() + ":" + port + "] " + ((Packet00Login) packet).getUsername() + " has connected...");
-				PlayerMP player = new PlayerMP(((Packet00Login) packet).getUsername(), address, port);
-				this.addConnection(player, (Packet00Login) packet);
+		try {
+			String message = new String(data).trim();
+			PacketTypes type = Packet.lookupPacket(message.substring(0, 2));
+			Packet packet = null;
+			switch (type) {
+			default:
+			case INVALID:
+				break;
+			case LOGIN:
+				if (connectedPlayers.size() < 2) {
+					packet = new Packet00Login(data);
+					System.out.println("SERVER] [" + address.getHostAddress() + ":" + port + "] " + ((Packet00Login) packet).getUsername() + " has connected...");
+					PlayerMP player = new PlayerMP(((Packet00Login) packet).getUsername(), address, port);
+					this.addConnection(player, (Packet00Login) packet);
+				}
+				if (connectedPlayers.size() == 2 && !Window.hasStarted) {
+					packet = new Packet04Start(true);
+					packet.writeData(this);
+				}
+				if (!Window.hasStarted) {
+					packet = new Packet05Response(true);
+					packet.writeData(this);
+				}
+				break;
+			case DISCONNECT:
+				packet = new Packet01Disconnect(data);
+				System.out.println("SERVER] [" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + " has left...");
+				this.removeConnection((Packet01Disconnect) packet);
+				JOptionPane.showMessageDialog(null, ((Packet01Disconnect) packet).getUsername() + " has quit the game", Bootstrap.getTitle(), JOptionPane.ERROR_MESSAGE);
+				Window.goToIntro();
+				break;
+			case MOVE:
+				packet = new Packet02Move(data);
+				this.handleMove(((Packet02Move) packet));
+			case CLICK:
+				packet = new Packet03Click(data);
+				this.handleClick(((Packet03Click) packet));
+			case START:
+				packet = new Packet04Start(data);
+				this.handleStart(((Packet04Start) packet));
+			case RESPONES:
+				packet = new Packet05Response(data);
+				this.handleResponse(((Packet05Response) packet));
 			}
-			if (connectedPlayers.size() == 2 && !Window.hasStarted) {
-				packet = new Packet04Start(true);
-				packet.writeData(this);
-			}
-			break;
-		case DISCONNECT:
-			packet = new Packet01Disconnect(data);
-			System.out.println("SERVER] [" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + " has left...");
-			this.removeConnection((Packet01Disconnect) packet);
-			JOptionPane.showMessageDialog(null, ((Packet01Disconnect) packet).getUsername() + " has quit the game", Bootstrap.getTitle(), JOptionPane.ERROR_MESSAGE);
-			Window.goToIntro();
-			break;
-		case MOVE:
-			packet = new Packet02Move(data);
-			this.handleMove(((Packet02Move) packet));
-		case CLICK:
-			packet = new Packet03Click(data);
-			this.handleClick(((Packet03Click) packet));
-		case START:
-			packet = new Packet04Start(data);
-			this.handleStart(((Packet04Start) packet));
+		} catch (Exception e) {
+			System.err.println("SERVER] [ERROR] " + e);
 		}
 	}
 
@@ -186,5 +198,9 @@ public class GameServer extends Thread {
 		if (connectedPlayers.size() == 2) packet.setStart(true);
 		else packet.setStart(false);
 		packet.writeData(this);
+	}
+
+	private void handleResponse(Packet05Response packet) {
+
 	}
 }

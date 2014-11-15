@@ -120,7 +120,13 @@ public class Page extends JPanel {
 			}
 
 			public void mouseDragged(MouseEvent e) {
-				mouse(e.getX(), e.getY());
+				if (Window.isMultiplayer()) {
+					if (isCurrent) {
+						mouse(e.getX(), e.getY());
+						Packet02Move packet = new Packet02Move(player.getUsername(), mx, my);
+						packet.writeData(socketClient);
+					}
+				} else mouse(e.getX(), e.getY());
 				repaint();
 			}
 		});

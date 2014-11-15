@@ -6,7 +6,7 @@ import net.gogo98901.ox.web.GameServer;
 public abstract class Packet {
 
 	public static enum PacketTypes {
-		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVE(02), CLICK(03), START(04);
+		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVE(02), CLICK(03), START(04), RESPONES(05);
 
 		private int packetId;
 

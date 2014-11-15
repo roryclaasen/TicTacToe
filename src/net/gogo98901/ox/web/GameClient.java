@@ -20,16 +20,18 @@ import net.gogo98901.ox.web.packet.Packet01Disconnect;
 import net.gogo98901.ox.web.packet.Packet02Move;
 import net.gogo98901.ox.web.packet.Packet03Click;
 import net.gogo98901.ox.web.packet.Packet04Start;
+import net.gogo98901.ox.web.packet.Packet05Response;
 
 public class GameClient extends Thread {
 
 	private InetAddress ipAddress;
 	private DatagramSocket socket;
 	private Page game;
+	private boolean connected;
 
 	public GameClient(Page game, String ipAddress) {
 		this.game = game;
-		System.out.println("CLIENT] Scanning ip=" + ipAddress);
+		/* if (!Lobby.scanning) */System.out.println("CLIENT] Scanning [" + ipAddress + "] for game");
 		try {
 			this.socket = new DatagramSocket();
 			this.ipAddress = InetAddress.getByName(ipAddress);
@@ -81,12 +83,16 @@ public class GameClient extends Thread {
 		case START:
 			packet = new Packet04Start(data);
 			this.handleStart(((Packet04Start) packet));
+		case RESPONES:
+			packet = new Packet05Response(data);
+			this.handleResponse(((Packet05Response) packet));
 		}
 	}
 
 	private void handleStart(Packet04Start packet) {
 		if (packet.getStart() && !Window.hasStarted) {
 			System.out.println("CLIENT] Game Started");
+			Window.hasStarted = true;
 			Window.goToPage(true);
 		}
 	}
@@ -96,7 +102,7 @@ public class GameClient extends Thread {
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("CLIENT] [ERROR] " + e);
 		}
 	}
 
@@ -116,5 +122,15 @@ public class GameClient extends Thread {
 	private void handleClick(Packet03Click packet) {
 		if (packet.getClicked()) game.click();
 		game.repaint();
+	}
+
+	private void handleResponse(Packet05Response packet) {
+		if (packet.getResponse()) connected = true;
+		else connected = false;
+		if (!Window.hasStarted) System.out.println("CLIENT] connection to " + ipAddress.getHostAddress() + " is " + connected);
+	}
+
+	public boolean isConnected() {
+		return connected;
 	}
 }

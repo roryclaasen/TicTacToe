@@ -28,7 +28,7 @@ public class Lobby extends JPanel {
 
 	private JLabel status, status2;
 
-	private JButton serverCreate, serverJoin, serverChange;
+	private JButton serverCreate, serverJoin, serverChange, serverScan;
 
 	private JTextField usernameField;
 
@@ -40,12 +40,14 @@ public class Lobby extends JPanel {
 	private static int CREATING = 2;
 	private static int MODE = USERNAME;
 
-	public static boolean hosting = false;
+	public static boolean hosting = false, scanning = false;
+	private Page game;
 
 	public Lobby(int width, int height) {
 		setLayout(null);
 		this.width = width;
 		this.height = height;
+		game = Window.getPage();
 		init();
 	}
 
@@ -62,7 +64,6 @@ public class Lobby extends JPanel {
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -70,7 +71,7 @@ public class Lobby extends JPanel {
 		try {
 			ip = getLocalAddress().toString().replace("/", "");
 		} catch (SocketException e) {
-			System.err.print("LOBBY] [ERROR] " + e);
+			System.err.print(" LOBBY] [ERROR] " + e);
 		}
 
 		status = new JLabel("Enter a Username");
@@ -137,9 +138,19 @@ public class Lobby extends JPanel {
 		serverCreate.setBounds(width / 4, height - 100, width / 4, 23);
 		add(serverCreate);
 
+		serverScan = new JButton("Scan for Server on local network");
+		serverScan.setBounds(width / 4, height - 130, width / 2, 23);
+		serverScan.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				scanForIPs();
+			}
+		});
+		add(serverScan);
+
 		serverChange.setEnabled(false);
 		serverJoin.setEnabled(false);
 		serverCreate.setEnabled(false);
+		serverScan.setEnabled(false);
 		usernameField.requestFocus();
 	}
 
@@ -151,6 +162,7 @@ public class Lobby extends JPanel {
 			serverChange.setVisible(false);
 			serverChange.setEnabled(false);
 			serverJoin.setEnabled(false);
+			serverScan.setEnabled(false);
 			serverCreate.setEnabled(false);
 			serverCreate.setVisible(true);
 		}
@@ -159,8 +171,10 @@ public class Lobby extends JPanel {
 			status2.setText(ip);
 			serverCreate.setVisible(false);
 			serverChange.setVisible(true);
+			serverScan.setEnabled(true);
 		}
 		if (MODE == CREATING) {
+			serverScan.setEnabled(false);
 			status.setText("Waiting for player");
 			status2.setText(ip);
 		}
@@ -173,7 +187,6 @@ public class Lobby extends JPanel {
 	}
 
 	private void server() {
-		Page game = Window.getPage();
 		if (MODE == CREATING) {
 			game.socketServer = new GameServer(game);
 			game.socketServer.start();
@@ -196,5 +209,35 @@ public class Lobby extends JPanel {
 
 	public static String getUsername() {
 		return username;
+	}
+
+	@SuppressWarnings("static-access")
+	public void scanForIPs() {
+		String IPV4 = "";
+		try {
+			String currentIP = getLocalAddress().toString().replaceFirst("/", "");
+			String[] parts = currentIP.split("\\.");
+			for (int i = 0; i < parts.length; i++) {
+				if (i != parts.length - 1) IPV4 += parts[i] + ".";
+			}
+		} catch (SocketException e) {
+			System.err.println(" LOBBY] [ERROR]" + e);
+		}
+		System.out.println(" LOBBY] [SCAN] Started");
+		status2.setText("Scanning network for reachable servers");
+		for (int i = 0; i < 256; i++) {
+			scanning = true;
+			String tryIp = IPV4 + i;
+			status2.setText(ip = tryIp);
+			repaint();
+			update();
+			try {
+				new Thread().sleep(50);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (game.socketClient.isConnected()) break;
+		}
+		scanning = false;
 	}
 }
