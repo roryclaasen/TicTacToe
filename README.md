@@ -29,4 +29,4 @@ To see all downloads click on [releases](https://github.com/GOGO98901/TicTacToe/
 1. For the most current download head to my [onedrive](https://onedrive.live.com/redir?resid=7150EC3B543FE9BF%2179597) and download [TicTacAdvanced.jar](http://1drv.ms/1zYK2cY)
   * This download is the file I use for testing bewteen computers and so if you are the unlucky one to download when I'm testing the game may not work
   * Howerver this will be the most up to date file
-2. Download the current build 1.2 [here](https://github.com/GOGO98901/TicTacToe/releases/tag/1.2)
+2. Download the current build 1.3 [here](https://github.com/GOGO98901/TicTacToe/releases/tag/1.3)
