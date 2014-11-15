@@ -502,11 +502,15 @@ public class Page extends JPanel {
 		String currentPlayer = "";
 		int player = 0;
 		if (currentColor == blue) player = 1;
-		if (currentColor == red) player = 1;
+		if (currentColor == red) player = 2;
 		if (Intro.names[(player - 1)].length() != 0) currentPlayer = Intro.names[(player - 1)];
 		else currentPlayer = "Player " + player;
 
 		if (winner != 0) {
+			if (currentColor == red) player = 1;
+			if (currentColor == blue) player = 2;
+			if (Intro.names[(player - 1)].length() != 0) currentPlayer = Intro.names[(player - 1)];
+			else currentPlayer = "Player " + player;
 			if (winner == 3) title.setText("Its a draw");
 			else title.setText(currentPlayer + " is the winner");
 			undo.setEnabled(false);
