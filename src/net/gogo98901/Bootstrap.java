@@ -30,7 +30,7 @@ public class Bootstrap {
 		} catch (UnsupportedLookAndFeelException e) {
 			e.printStackTrace();
 		}
-		window = new Window(700, 500);
+		window = new Window(WIDTH, HEIGHT);
 		window.setDefaultCloseOperation(3);
 		window.setLocationRelativeTo(null);
 		window.setResizable(false);
