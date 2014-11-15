@@ -112,7 +112,7 @@ public class Page extends JPanel {
 				if (Window.isMultiplayer()) {
 					if (isCurrent) {
 						mouse(e.getX(), e.getY());
-						Packet02Move packet = new Packet02Move(player.getUsername(),e.getX(), e.getY());
+						Packet02Move packet = new Packet02Move(player.getUsername(), e.getX(), e.getY());
 						packet.writeData(socketClient);
 					}
 				} else mouse(e.getX(), e.getY());
@@ -123,9 +123,10 @@ public class Page extends JPanel {
 				if (Window.isMultiplayer()) {
 					if (isCurrent) {
 						mouse(e.getX(), e.getY());
-						Packet02Move packet = new Packet02Move(player.getUsername(),e.getX(), e.getY());
+						Packet02Move packet = new Packet02Move(player.getUsername(), e.getX(), e.getY());
 						packet.writeData(socketClient);
 					}
+
 				} else mouse(e.getX(), e.getY());
 				repaint();
 			}
@@ -501,8 +502,7 @@ public class Page extends JPanel {
 		String currentPlayer = "";
 		int player = 0;
 		if (currentColor == blue) player = 1;
-		if (currentColor == red) player = 2;
-
+		if (currentColor == red) player = 1;
 		if (Intro.names[(player - 1)].length() != 0) currentPlayer = Intro.names[(player - 1)];
 		else currentPlayer = "Player " + player;
 
