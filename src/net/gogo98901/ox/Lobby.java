@@ -3,8 +3,6 @@ package net.gogo98901.ox;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -17,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 
 import net.gogo98901.ox.player.PlayerMP;
 import net.gogo98901.ox.web.GameClient;
@@ -29,7 +28,7 @@ public class Lobby extends JPanel {
 
 	private JLabel status, status2;
 
-	private JButton serverCreate, serverJoin, serverChange, serverScan;
+	private JButton serverCreate, serverJoin, serverChange, serverScan, nameChange, nameOkay;
 
 	private JTextField usernameField;
 
@@ -39,6 +38,7 @@ public class Lobby extends JPanel {
 	private static int USERNAME = 0;
 	private static int JOINING = 1;
 	private static int CREATING = 2;
+	private static int LOOKING = 3;
 	private static int MODE = USERNAME;
 
 	public static boolean hosting = false, scanning = false;
@@ -95,22 +95,37 @@ public class Lobby extends JPanel {
 			}
 		});
 
-		usernameField = new JTextField();
-		usernameField.addKeyListener(new KeyAdapter() {
-			public void keyReleased(KeyEvent e) {
-				if (usernameField.getText().length() > 0) {
-					serverChange.setEnabled(true);
-					serverJoin.setEnabled(true);
-					serverCreate.setEnabled(true);
-				} else {
-					update();
-					MODE = USERNAME;
-				}
-				username = usernameField.getText();
-			}
-		});
+		usernameField = new JTextField(System.getProperty("user.name"));
 		usernameField.setBounds(width / 4, 75, width / 2, 20);
 		add(usernameField);
+
+		nameChange = new JButton("Change Username");
+		nameChange.setBounds(width / 4, 100, width / 4, 24);
+		nameChange.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MODE = USERNAME;
+				update();
+				nameOkay.setEnabled(true);
+				nameChange.setEnabled(false);
+				status.setText("Enter a Username");
+				repaint();
+			}
+		});
+		add(nameChange);
+
+		nameOkay = new JButton("Set Username");
+		nameOkay.setBounds(width / 2, 100, width / 4, 24);
+		nameOkay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (usernameField.getText().length() > 0) MODE = LOOKING;
+				else MODE = USERNAME;
+				update();
+				username = usernameField.getText();
+				status.setText(username);
+				repaint();
+			}
+		});
+		add(nameOkay);
 
 		serverJoin.setBounds(width / 2, height - 100, width / 4, 23);
 		add(serverJoin);
@@ -148,6 +163,7 @@ public class Lobby extends JPanel {
 		});
 		add(serverScan);
 
+		nameChange.setEnabled(false);
 		serverChange.setEnabled(false);
 		serverJoin.setEnabled(false);
 		serverCreate.setEnabled(false);
@@ -157,6 +173,10 @@ public class Lobby extends JPanel {
 
 	private void update() {
 		serverReset();
+		repaint();
+		revalidate();
+		repaint();
+
 		if (MODE == USERNAME) {
 			status.setText("Enter a Username");
 			status2.setText("");
@@ -166,6 +186,15 @@ public class Lobby extends JPanel {
 			serverScan.setEnabled(false);
 			serverCreate.setEnabled(false);
 			serverCreate.setVisible(true);
+			usernameField.setEnabled(true);
+		}
+		if (MODE == LOOKING) {
+			usernameField.setEnabled(false);
+			serverChange.setEnabled(true);
+			serverJoin.setEnabled(true);
+			serverCreate.setEnabled(true);
+			nameOkay.setEnabled(false);
+			nameChange.setEnabled(true);
 		}
 		if (MODE == JOINING) {
 			status.setText("Looking for server");
@@ -176,15 +205,19 @@ public class Lobby extends JPanel {
 		}
 		if (MODE == CREATING) {
 			serverScan.setEnabled(false);
+			nameChange.setEnabled(false);
 			status.setText("Waiting for player");
 			status2.setText(ip);
 		}
-		if (MODE != USERNAME) server();
+		if (MODE != USERNAME && MODE != LOOKING) server();
 	}
 
 	private void serverReset() {
-		Window.getPage().socketClient = null;
-		Window.getPage().socketServer = null;
+		if (game.socketServer != null) game.socketServer.stopServer();
+		if (game.socketClient != null) game.socketClient.stopClient();
+		game.socketClient = null;
+		game.socketServer = null;
+		// System.out.println(" LOBBY] sockets set to null");
 	}
 
 	private void server() {
@@ -214,31 +247,53 @@ public class Lobby extends JPanel {
 
 	@SuppressWarnings("static-access")
 	public void scanForIPs() {
-		String IPV4 = "";
-		try {
-			String currentIP = getLocalAddress().toString().replaceFirst("/", "");
-			String[] parts = currentIP.split("\\.");
-			for (int i = 0; i < parts.length; i++) {
-				if (i != parts.length - 1) IPV4 += parts[i] + ".";
+		Thread t = new Thread() {
+			public void run() {
+				status.setText("Scanning network for reachable servers");
+				repaint();
+				String IPV4 = "";
+				try {
+					String currentIP = getLocalAddress().toString().replaceFirst("/", "");
+					String[] parts = currentIP.split("\\.");
+					for (int i = 0; i < parts.length; i++) {
+						if (i != parts.length - 1) IPV4 += parts[i] + ".";
+					}
+				} catch (SocketException e) {
+					System.err.println(" LOBBY] [ERROR]" + e);
+				}
+				System.out.println(" LOBBY] [SCAN] Started");
+				for (int i = 0; i < 256; i++) {
+					scanning = true;
+					final String tryIp = IPV4 + i;
+					SwingUtilities.invokeLater(new Runnable() {
+						public void run() {
+							status2.setText(ip = tryIp);
+							status2.repaint();
+						}
+					});
+					try {
+						new Thread().sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					serverReset();
+					server();
+					try {
+						new Thread().sleep(100);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					if (game.socketClient.isConnected()) break;
+				}
+				scanning = false;
+				try {
+					ip = getLocalAddress().toString();
+				} catch (SocketException e) {
+					System.err.println(" LOBBY] [ERROR]" + e);
+				}
 			}
-		} catch (SocketException e) {
-			System.err.println(" LOBBY] [ERROR]" + e);
-		}
-		System.out.println(" LOBBY] [SCAN] Started");
-		status2.setText("Scanning network for reachable servers");
-		for (int i = 0; i < 256; i++) {
-			scanning = true;
-			String tryIp = IPV4 + i;
-			status2.setText(ip = tryIp);
-			repaint();
-			update();
-			try {
-				new Thread().sleep(50);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-			if (game.socketClient.isConnected()) break;
-		}
-		scanning = false;
+		};
+		t.start();
+
 	}
 }

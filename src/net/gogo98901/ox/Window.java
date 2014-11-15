@@ -3,14 +3,13 @@ package net.gogo98901.ox;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Dimension;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import net.gogo98901.ox.web.packet.Packet01Disconnect;
-
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 
 public class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
@@ -49,7 +48,7 @@ public class Window extends JFrame {
 	}
 
 	public static void goToIntro() {
-		//disconect();
+		// disconect();
 		intro.reset();
 		CardLayout cl = (CardLayout) (cards.getLayout());
 		cl.show(cards, introText);
@@ -75,11 +74,13 @@ public class Window extends JFrame {
 		page.start();
 		hasStarted = true;
 	}
-	
-	public static void disconect(){
+
+	public static void disconect() {
 		if (isMultiplayer && hasStarted) {
 			Packet01Disconnect packet = new Packet01Disconnect(Page.getClientName());
 			packet.writeData(page.socketClient);
+			if (page.socketClient != null) page.socketClient.stopClient();
+			if (page.socketServer != null) page.socketServer.stopServer();
 			page.socketClient = null;
 			page.socketServer = null;
 		}

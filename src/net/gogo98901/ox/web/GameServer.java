@@ -30,6 +30,8 @@ public class GameServer extends Thread {
 	private Page game;
 	private List<PlayerMP> connectedPlayers = new ArrayList<PlayerMP>();
 
+	private boolean running = true;
+
 	public GameServer(Page game) {
 		System.out.println("SERVER] Started");
 		this.game = game;
@@ -41,7 +43,7 @@ public class GameServer extends Thread {
 	}
 
 	public void run() {
-		while (true) {
+		while (running) {
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {
@@ -51,6 +53,12 @@ public class GameServer extends Thread {
 			}
 			this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 		}
+		stopServer();
+	}
+
+	public void stopServer() {
+		running = false;
+		//System.out.println("SERVER] shutting down");
 	}
 
 	private void parsePacket(byte[] data, InetAddress address, int port) {

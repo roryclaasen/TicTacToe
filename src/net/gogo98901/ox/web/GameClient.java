@@ -27,7 +27,7 @@ public class GameClient extends Thread {
 	private InetAddress ipAddress;
 	private DatagramSocket socket;
 	private Page game;
-	private boolean connected;
+	private boolean connected, running = true;
 
 	public GameClient(Page game, String ipAddress) {
 		this.game = game;
@@ -43,7 +43,7 @@ public class GameClient extends Thread {
 	}
 
 	public void run() {
-		while (true) {
+		while (running) {
 			byte[] data = new byte[1024];
 			DatagramPacket packet = new DatagramPacket(data, data.length);
 			try {
@@ -53,6 +53,12 @@ public class GameClient extends Thread {
 			}
 			this.parsePacket(packet.getData(), packet.getAddress(), packet.getPort());
 		}
+		stopClient();
+	}
+
+	public void stopClient() {
+		running = false;
+		//System.out.println("CLIENT] shutting down");
 	}
 
 	private void parsePacket(byte[] data, InetAddress address, int port) {
