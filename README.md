@@ -1,5 +1,5 @@
 
-<img src="https://raw.githubusercontent.com/GOGO98901/TicTacToe/master/res/icon.png" align="left" height="48" width="48" > TicTacToe 
+<img src="https://raw.githubusercontent.com/GOGO98901/TicTacToe/master/res/icon.png" align="left" height="48" width="48" > TicTacToe
 =========
 
 A game I made that was inspired by a maths class from school
