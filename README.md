@@ -1,7 +1,6 @@
-
-<img src="https://raw.githubusercontent.com/GOGO98901/TicTacToe/master/res/icon.png" align="left" height="48" width="48" > TicTacToe
+TicTacToe
 =========
-
+<img src="https://raw.githubusercontent.com/GOGO98901/TicTacToe/master/res/icon.png" align="left" height="48" width="48" >
 A game I made that was inspired by a maths class from school
 
 The game has to have two players, however they can be on the same pc or on different ones.
