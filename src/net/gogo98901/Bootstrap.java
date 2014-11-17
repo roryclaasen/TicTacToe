@@ -39,7 +39,7 @@ public class Bootstrap {
 				window.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 				window.setLocationRelativeTo(null);
 				window.setResizable(false);
-				window.setTitle("Tic Tac Toe");
+				window.setTitle(getTitle());
 				window.setName("A game by Rory Claasen");
 				try {
 					window.setIconImage(ImageIO.read(Bootstrap.class.getClassLoader().getResourceAsStream("icon.png")));
