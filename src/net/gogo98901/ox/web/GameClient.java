@@ -78,7 +78,7 @@ public class GameClient extends Thread {
 			System.out.println("CLIENT] [" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + " has left the game...");
 			game.playerMP = null;
 			JOptionPane.showMessageDialog(null, ((Packet01Disconnect) packet).getUsername() + " has quit the game", Bootstrap.getTitle(), JOptionPane.ERROR_MESSAGE);
-			Window.goToIntro();
+			Window.restartApp(true);
 			break;
 		case MOVE:
 			packet = new Packet02Move(data);

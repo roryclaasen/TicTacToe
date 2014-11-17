@@ -58,7 +58,7 @@ public class GameServer extends Thread {
 
 	public void stopServer() {
 		running = false;
-		//System.out.println("SERVER] shutting down");
+		// System.out.println("SERVER] shutting down");
 	}
 
 	private void parsePacket(byte[] data, InetAddress address, int port) {
@@ -91,7 +91,7 @@ public class GameServer extends Thread {
 				System.out.println("SERVER] [" + address.getHostAddress() + ":" + port + "] " + ((Packet01Disconnect) packet).getUsername() + " has left...");
 				this.removeConnection((Packet01Disconnect) packet);
 				JOptionPane.showMessageDialog(null, ((Packet01Disconnect) packet).getUsername() + " has quit the game", Bootstrap.getTitle(), JOptionPane.ERROR_MESSAGE);
-				Window.goToIntro();
+				Window.restartApp(true);
 				break;
 			case MOVE:
 				packet = new Packet02Move(data);

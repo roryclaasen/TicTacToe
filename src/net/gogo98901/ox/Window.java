@@ -5,10 +5,14 @@ import java.awt.CardLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import net.gogo98901.Bootstrap;
 import net.gogo98901.ox.web.packet.Packet01Disconnect;
 
 public class Window extends JFrame {
@@ -28,6 +32,7 @@ public class Window extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				disconect();
+				System.exit(0);
 			}
 		});
 		getContentPane().setLayout(new BorderLayout());
@@ -45,6 +50,7 @@ public class Window extends JFrame {
 		cards.add(page, pageText);
 		getContentPane().add(cards, BorderLayout.CENTER);
 		pack();
+		if (Bootstrap.multi) goToLobby();
 	}
 
 	public static void goToIntro() {
@@ -88,6 +94,33 @@ public class Window extends JFrame {
 
 	public static Page getPage() {
 		return page;
+	}
+
+	public static void restartApp(boolean multi) {
+		Bootstrap.multi = multi;
+		restartApp();
+	}
+
+	public static void restartApp() {
+		try {
+			final String javaBin = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
+			File currentJar;
+			currentJar = new File(Window.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+			if (currentJar.getName().endsWith(".jar")) {
+				final List<String> command = new ArrayList<String>();
+				command.add(javaBin);
+				command.add("-jar");
+				command.add(currentJar.getPath());
+				if (Bootstrap.showUndo) command.add("-undo");
+				if (Bootstrap.multi) command.add("-goToMultiplayer");
+
+				final ProcessBuilder builder = new ProcessBuilder(command);
+				builder.start();
+			}
+			System.exit(0);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

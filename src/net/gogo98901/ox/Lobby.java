@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
+import net.gogo98901.Bootstrap;
 import net.gogo98901.ox.player.PlayerMP;
 import net.gogo98901.ox.web.GameClient;
 import net.gogo98901.ox.web.GameServer;
@@ -28,7 +29,7 @@ public class Lobby extends JPanel {
 
 	private JLabel status, status2;
 
-	private JButton serverCreate, serverJoin, serverChange, serverScan, nameChange, nameOkay;
+	private JButton back, serverCreate, serverJoin, serverChange, serverScan, nameChange, nameOkay;
 
 	private JTextField usernameField;
 
@@ -86,6 +87,17 @@ public class Lobby extends JPanel {
 		status2.setHorizontalAlignment(SwingConstants.CENTER);
 		status2.setBounds(0, 30, width, 30);
 		add(status2);
+
+		back = new JButton("Back");
+		back.setBounds(10, 10, 75, 25);
+		back.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				serverReset();
+				if (MODE == CREATING) Window.restartApp(false);
+				else Window.goToIntro();
+			}
+		});
+		add(back);
 
 		serverJoin = new JButton("Join Server");
 		serverJoin.addActionListener(new ActionListener() {
@@ -147,8 +159,14 @@ public class Lobby extends JPanel {
 		serverCreate = new JButton("Create Server");
 		serverCreate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MODE = CREATING;
-				update();
+				if (MODE == CREATING) {
+					System.out.println(" LOBBY] Restarting app");
+					Bootstrap.multi = true;
+					Window.restartApp();
+				} else {
+					MODE = CREATING;
+					update();
+				}
 			}
 		});
 		serverCreate.setBounds(width / 4, height - 100, width / 4, 23);
@@ -206,6 +224,8 @@ public class Lobby extends JPanel {
 		if (MODE == CREATING) {
 			serverScan.setEnabled(false);
 			nameChange.setEnabled(false);
+			serverJoin.setEnabled(false);
+			serverCreate.setText("Stop Server");
 			status.setText("Waiting for player");
 			status2.setText(ip);
 		}

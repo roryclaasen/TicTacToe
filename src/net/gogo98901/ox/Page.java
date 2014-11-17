@@ -93,6 +93,7 @@ public class Page extends JPanel {
 		newGame = new JButton("New");
 		newGame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				if (Window.isMultiplayer()) Window.disconect();
 				reset();
 				Window.goToIntro();
 			}
@@ -162,6 +163,8 @@ public class Page extends JPanel {
 		if (Window.isMultiplayer()) {
 			undo.setVisible(false);
 			reset.setVisible(false);
+			newGame.setText("Disconect");
+			newGame.setBounds(10, 10, 100, 25);
 			isCurrent = Lobby.hosting;
 			if (isCurrent) {
 				Intro.names[0] = player.getUsername();
