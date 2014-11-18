@@ -32,4 +32,4 @@ To see all downloads click on [releases](https://github.com/GOGO98901/TicTacToe/
 
 ---
 ###Project Map
-[<img src="Diagram.png" />](http://github.com/GOGO98901/TicTacToe/Diagram.png)
+[<img src="Diagram.png" />](http://github.com/GOGO98901/TicTacToe/blob/master/Diagram.png)
