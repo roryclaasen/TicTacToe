@@ -29,3 +29,7 @@ To see all downloads click on [releases](https://github.com/GOGO98901/TicTacToe/
   * This download is the file I use for testing bewteen computers and so if you are the unlucky one to download when I'm testing the game may not work
   * Howerver this will be the most up to date file
 2. Download the current build 1.5 [here](https://github.com/GOGO98901/TicTacToe/releases/tag/1.5)
+
+---
+###Project Map
+[<img src="Diagram.png" />](http://github.com/GOGO98901/TicTacToe/Diagram.png)

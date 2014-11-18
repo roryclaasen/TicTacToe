@@ -21,8 +21,8 @@
   </class>  
   <class id="3" language="java" name="net.gogo98901.ox.Page" project="TicTacToe" 
     file="/TicTacToe/src/net/gogo98901/ox/Page.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="889" y="199"/>    
-    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+    <position height="1053" width="185" x="798" y="-353"/>    
+    <display autosize="false" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
